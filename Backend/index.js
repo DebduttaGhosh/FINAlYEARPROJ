@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const FRONTEND = 'http://localhost:3000';
-const MONGO_URL = "mongodb://localhost/studentsDB"
+const MONGO_URL = "mongodb+srv://debduttaghosh32:lrpVzyb36B1JJBdM@studentdata.dsafof2.mongodb.net/"
 
 app.use(cors({ origin: FRONTEND, credentials: true }));
 

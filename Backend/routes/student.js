@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Student = require('../models/student');
+const Student = require('../Models/student');
 
 
 router.get('/test', (req, res) => {res.send("TEST")})
