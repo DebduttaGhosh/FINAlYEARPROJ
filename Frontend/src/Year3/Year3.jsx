@@ -341,13 +341,17 @@ export default function Year4() {
                   <div>
                     <input
                       defaultValue={item.Subject1}
-                      onChange={(e) => setSubject1(e.target.value)}
+                      onChange={(e) =>
+                        setSubject({ ...subject, one: e.target.value })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
                     ></input>
                     <input
                       defaultValue={item.Subject2}
-                      onChange={(e) => setSubject2(e.target.value)}
+                      onChange={(e) =>
+                        setSubject({ ...subject, two: e.target.value })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
