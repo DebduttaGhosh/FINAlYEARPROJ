@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"build completed\" ",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "node --watch index.js"
   },
   "author": "",
   "license": "ISC",
