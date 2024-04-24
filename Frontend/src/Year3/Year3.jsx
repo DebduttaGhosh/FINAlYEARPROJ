@@ -12,8 +12,7 @@ export default function Year4() {
   let i = 1;
   let j = 1;
 
-  const [subject1, setSubject1] = useState(""); // Use the default value if available
-  const [subject2, setSubject2] = useState("");
+  const [subject, setSubject] = useState({ one: "", two: "" });
 
   const [data, setData] = useState([]);
 
@@ -64,9 +63,13 @@ export default function Year4() {
   const handleSaveSubjects = async (id) => {
     try {
       // Use state variables for subject1 and subject2
-      const data = { Subject1: subject1, Subject2: subject2 };
-
-      await axios.put(`${URL}/api/students/updateSubjects/${id}`, data);
+      console.log("subjects");
+      console.log(subject.one);
+      console.log(subject.two);
+      await axios.put(`${URL}/api/students/updateSubjects/${id}`, {
+        Subject1: subject.one,
+        Subject2: subject.two,
+      });
       console.log("Subjects updated successfully");
       toast.success("Subjects updated successfully");
     } catch (error) {
@@ -201,13 +204,17 @@ export default function Year4() {
                   <div>
                     <input
                       defaultValue={item.Subject1}
-                      onChange={(e) => setSubject1(e.target.value)}
+                      onChange={(e) =>
+                        setSubject({ ...subject, one: e.target.value })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
                     ></input>
                     <input
                       defaultValue={item.Subject2}
-                      onChange={(e) => setSubject2(e.target.value)}
+                      onChange={(e) =>
+                        setSubject({ ...subject, two: e.target.value })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>

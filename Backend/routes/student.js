@@ -8,7 +8,7 @@ router.get("/test", (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const students = await Student.find({}, { _id: 0 });
+    const students = await Student.find();
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: error.message });
