@@ -100,7 +100,7 @@ export const calc = (data) => {
   }
 
   return {
-    average: sum / count,
-    percentage: (sum / count) * 10,
+    average: (sum / count).toFixed(2),
+    percentage: ((sum / count) * 10).toFixed(2),
   };
 };

@@ -12,7 +12,7 @@ export default function Year4() {
   let i = 1;
   let j = 1;
 
-  const [subject, setSubject] = useState({ one: "", two: "" });
+  const [subject, setSubject] = useState([{ one: "", two: "" }]);
 
   const [data, setData] = useState([]);
 
@@ -45,7 +45,6 @@ export default function Year4() {
           .sort((a, b) => b.percentage - a.percentage); // Sort in descending order by percentage
 
         setData(response.data); // Update the state with fetched data
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -60,17 +59,14 @@ export default function Year4() {
     };
   }, []); // Empty dependency array means this effect runs only once, on mount
 
-  const handleSaveSubjects = async (id) => {
+  const handleSaveSubjects = async (id, sub1, sub2) => {
     try {
       // Use state variables for subject1 and subject2
-      console.log("subjects");
-      console.log(subject.one);
-      console.log(subject.two);
+      console.log(sub1, sub2);
       await axios.put(`${URL}/api/students/updateSubjects/${id}`, {
-        Subject1: subject.one,
-        Subject2: subject.two,
+        Subject1: sub1,
+        Subject2: sub2,
       });
-      console.log("Subjects updated successfully");
       toast.success("Subjects updated successfully");
     } catch (error) {
       console.error("Error updating subjects:", error);
@@ -200,12 +196,21 @@ export default function Year4() {
                   {item.percentage} %
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {console.log(item.Subject1 + " " + item.subject2)}
                   <div>
                     <input
                       defaultValue={item.Subject1}
                       onChange={(e) =>
-                        setSubject({ ...subject, one: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject1: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
@@ -213,13 +218,29 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject2}
                       onChange={(e) =>
-                        setSubject({ ...subject, two: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject2: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
                     <div
-                      onClick={() => handleSaveSubjects(item._id)}
+                      onClick={() =>
+                        handleSaveSubjects(
+                          item._id,
+                          item.Subject1,
+                          item.Subject2
+                        )
+                      }
                       className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                     >
                       {" "}
@@ -342,7 +363,17 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject1}
                       onChange={(e) =>
-                        setSubject({ ...subject, one: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject1: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
@@ -350,13 +381,29 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject2}
                       onChange={(e) =>
-                        setSubject({ ...subject, two: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject2: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
                     <div
-                      onClick={() => handleSaveSubjects(item._id)}
+                      onClick={() =>
+                        handleSaveSubjects(
+                          item._id,
+                          item.Subject1,
+                          item.Subject2
+                        )
+                      }
                       className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                     >
                       {" "}
