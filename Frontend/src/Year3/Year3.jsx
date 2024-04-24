@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { URL } from "../http/index";
@@ -25,9 +25,18 @@ export default function Year4() {
         response.data = response.data
           .map((item, index) => {
             // Calculate percentage
-            const percentage =
-              ((item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) / 4) *
-              10;
+            let percentage = 0;
+            if (item.Current_Semester === "5") {
+              percentage = (
+                ((item.SGPA_1 + item.SGPA_2 + item.SGPA_3) / 3) *
+                10
+              ).toFixed(2);
+            } else {
+              percentage = (
+                ((item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) / 4) *
+                10
+              ).toFixed(2);
+            }
 
             return {
               ...item,
@@ -104,10 +113,10 @@ export default function Year4() {
       <div className="text-xl font-semibold mb-2">5th Semester</div>
       <button
         type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         onClick={() => convertToPDF("5", data)}
       >
-        Convert to PDF
+        Convert to XLS
       </button>
       <table className="min-w-full border-collapse border border-gray-300">
         {/* Table Header */}
@@ -182,7 +191,7 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(item.SGPA_1 + item.SGPA_2 + item.SGPA_3) / 3}
+                  {((item.SGPA_1 + item.SGPA_2 + item.SGPA_3) / 3).toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
@@ -229,10 +238,10 @@ export default function Year4() {
       <div className="text-xl font-semibold mb-2">6th Semester</div>
       <button
         type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         onClick={() => convertToPDF("6", data)}
       >
-        Convert to PDF
+        Convert to XLS
       </button>
       <table className="min-w-full border-collapse border border-gray-300">
         {/* Table Header */}
@@ -313,7 +322,10 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) / 4}
+                  {(
+                    (item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) /
+                    4
+                  ).toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %

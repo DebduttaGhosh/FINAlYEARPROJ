@@ -4,6 +4,15 @@ export const convertToPDF = (sem, data, year) => {
     year ? x.Current_Year === year : x.Current_Semester === sem
   );
   const fileName = `${sem}-result`;
+  const removedNullValues = JSON.parse(
+    JSON.stringify(newData, (key, value) => {
+      if (value === null || value === undefined) {
+        return undefined;
+      }
+
+      return value;
+    })
+  );
   const exportType = "xls";
-  exportFromJSON({ data: newData, fileName, exportType });
+  exportFromJSON({ data: removedNullValues, fileName, exportType });
 };

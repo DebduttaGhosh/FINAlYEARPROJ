@@ -7,7 +7,6 @@ import { convertToPDF } from "../util/util";
 export default function Year2() {
   let { year } = useParams();
   let i = 1;
-  let j = 2;
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -47,10 +46,10 @@ export default function Year2() {
       <h1 className="text-3xl font-bold mb-5 mt-10">Year {year} Data</h1>
       <button
         type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         onClick={() => convertToPDF("6", data, (year = "2"))}
       >
-        Convert to PDF
+        Convert to XLS
       </button>
       <div className="mb-2 mt-10 flex">
         <Link
@@ -152,7 +151,7 @@ export default function Year2() {
                   {(item.SGPA_1 + item.SGPA_2) / 2}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {((item.SGPA_1 + item.SGPA_2) / 2) * 10} %
+                  {((item.SGPA_1 + item.SGPA_2) / 20) * 100} %
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   <div
