@@ -8,7 +8,6 @@ export default function Year() {
   let { year } = useParams();
 
   let i = 1;
-  let j = 2;
 
   const [data, setData] = useState([]);
 
@@ -50,7 +49,7 @@ export default function Year() {
 
       <button
         type="button"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         onClick={() => convertToPDF("5", data, (year = "1"))}
       >
         Convert to XLS
