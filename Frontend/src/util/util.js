@@ -39,7 +39,7 @@ export const convertToPDF = (sem, data, year) => {
       sum += data.SGPA_8;
       count++;
     }
-    return { ...data, Average: sum / count };
+    return { ...data, Average: (sum / count).toFixed(2) };
   });
   const fileName = `${sem}-result`;
   let removedNullValues = JSON.parse(
@@ -53,12 +53,12 @@ export const convertToPDF = (sem, data, year) => {
   );
   console.log(removedNullValues);
   removedNullValues = removedNullValues.map((i, idx) => {
-    delete i.serial;
+    delete i.Serial;
     delete i._id;
     delete i.Active_Backlog;
     delete i.Backlog_Subject;
     delete i.__v;
-    return { serial: idx, ...i };
+    return { Serial: idx + 1, ...i };
   });
   const exportType = "xls";
   exportFromJSON({ data: removedNullValues, fileName, exportType });
