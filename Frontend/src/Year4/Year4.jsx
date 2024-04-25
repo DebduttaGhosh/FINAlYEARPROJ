@@ -4,18 +4,13 @@ import axios from "axios";
 import { URL } from "../http/index";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { convertToPDF } from "../util/util";
+import { calc, convertToPDF } from "../util/util";
 
 export default function Year4() {
   let { year } = useParams();
 
   let i = 1;
   let j = 1;
-
-  const [subject1, setSubject1] = useState(""); // Use the default value if available
-  const [subject2, setSubject2] = useState("");
-  const [subject3, setSubject3] = useState(""); // Use the default value if available
-  const [subject4, setSubject4] = useState("");
 
   const [data, setData] = useState([]);
 
@@ -24,6 +19,16 @@ export default function Year4() {
     const fetchData = async () => {
       try {
         const response = await axios.get(URL + "/api/students/");
+        response.data = response.data
+          .map((item, index) => {
+            // Calculate percentage
+            let percentage = calc(item).percentage;
+            return {
+              ...item,
+              percentage: percentage,
+            };
+          })
+          .sort((a, b) => b.percentage - a.percentage);
         setData(response.data); // Update the state with fetched data
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -50,14 +55,20 @@ export default function Year4() {
     }
   };
 
-  const handleSaveSubjects = async (id) => {
+  const handleSaveSubjects = async (
+    id,
+    Subject1,
+    Subject2,
+    Subject3,
+    Subject4
+  ) => {
     try {
       // Use state variables for subject1 and subject2
       const data = {
-        Subject1: subject1,
-        Subject2: subject2,
-        Subject3: subject3,
-        Subject4: subject4,
+        Subject1,
+        Subject2,
+        Subject3,
+        Subject4,
       };
 
       await axios.put(`${URL}/api/students/updateSubjects/${id}`, data);
@@ -153,23 +164,6 @@ export default function Year4() {
         <tbody>
           {data
             .filter((item) => item.Current_Semester === "7")
-            .map((item, index) => {
-              // Calculate percentage
-              const percentage =
-                ((item.SGPA_1 +
-                  item.SGPA_2 +
-                  item.SGPA_3 +
-                  item.SGPA_4 +
-                  item.SGPA_5) /
-                  5) *
-                10;
-
-              return {
-                ...item,
-                percentage: percentage,
-              };
-            })
-            .sort((a, b) => b.percentage - a.percentage) // Sort in descending order by percentage
             .map((item, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
@@ -203,12 +197,7 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(item.SGPA_1 +
-                    item.SGPA_2 +
-                    item.SGPA_3 +
-                    item.SGPA_4 +
-                    item.SGPA_5) /
-                    5}
+                  {calc(item).average}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
@@ -217,30 +206,86 @@ export default function Year4() {
                   <div>
                     <input
                       defaultValue={item.Subject1}
-                      onChange={(e) => setSubject1(e.target.value)}
+                      onChange={(e) =>
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject1: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200  shadow-lg mb-1 px-1"
                     ></input>
                     <input
                       defaultValue={item.Subject2}
-                      onChange={(e) => setSubject2(e.target.value)}
+                      onChange={(e) =>
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject2: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1 "
                     ></input>
                     <input
                       defaultValue={item.Subject3}
-                      onChange={(e) => setSubject3(e.target.value)}
+                      onChange={(e) =>
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject3: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
                     ></input>
                     <input
                       defaultValue={item.Subject4}
-                      onChange={(e) => setSubject4(e.target.value)}
+                      onChange={(e) =>
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject4: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
+                      }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
                     <div
-                      onClick={() => handleSaveSubjects(item._id)}
+                      onClick={() =>
+                        handleSaveSubjects(
+                          item._id,
+                          item.Subject1,
+                          item.Subject2,
+                          item.Subject3,
+                          item.Subject4
+                        )
+                      }
                       className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                     >
                       {" "}
@@ -326,24 +371,6 @@ export default function Year4() {
         <tbody>
           {data
             .filter((item) => item.Current_Semester === "8")
-            .map((item, index) => {
-              // Calculate percentage
-              const percentage =
-                ((item.SGPA_1 +
-                  item.SGPA_2 +
-                  item.SGPA_3 +
-                  item.SGPA_4 +
-                  item.SGPA_5 +
-                  item.SGPA_6) /
-                  6) *
-                10;
-
-              return {
-                ...item,
-                percentage: percentage,
-              };
-            })
-            .sort((a, b) => b.percentage - a.percentage) // Sort in descending order by percentage
             .map((item, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
@@ -380,13 +407,7 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(item.SGPA_1 +
-                    item.SGPA_2 +
-                    item.SGPA_3 +
-                    item.SGPA_4 +
-                    item.SGPA_5 +
-                    item.SGPA_6) /
-                    6}
+                  {calc(item).average}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
@@ -394,30 +415,86 @@ export default function Year4() {
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   <input
                     defaultValue={item.Subject1}
-                    onChange={(e) => setSubject1(e.target.value)}
+                    onChange={(e) =>
+                      setData((prev) => {
+                        const idx = prev.findIndex((i) => i._id === item._id);
+                        const object = Object.assign({}, prev[idx], {
+                          Subject1: e.target.value,
+                        });
+                        return [
+                          ...prev.slice(0, idx), // keep items before
+                          object, // replace the
+                          ...prev.slice(idx + 1),
+                        ];
+                      })
+                    }
                     placeholder="Enter subject"
                     className="bg-yellow-200  shadow-lg mb-1 px-1"
                   ></input>
                   <input
                     defaultValue={item.Subject2}
-                    onChange={(e) => setSubject2(e.target.value)}
+                    onChange={(e) =>
+                      setData((prev) => {
+                        const idx = prev.findIndex((i) => i._id === item._id);
+                        const object = Object.assign({}, prev[idx], {
+                          Subject2: e.target.value,
+                        });
+                        return [
+                          ...prev.slice(0, idx), // keep items before
+                          object, // replace the
+                          ...prev.slice(idx + 1),
+                        ];
+                      })
+                    }
                     placeholder="Enter subject"
                     className="bg-yellow-200 -md shadow-lg mb-1 px-1 "
                   ></input>
                   <input
                     defaultValue={item.Subject3}
-                    onChange={(e) => setSubject3(e.target.value)}
+                    onChange={(e) =>
+                      setData((prev) => {
+                        const idx = prev.findIndex((i) => i._id === item._id);
+                        const object = Object.assign({}, prev[idx], {
+                          Subject3: e.target.value,
+                        });
+                        return [
+                          ...prev.slice(0, idx), // keep items before
+                          object, // replace the
+                          ...prev.slice(idx + 1),
+                        ];
+                      })
+                    }
                     placeholder="Enter subject"
                     className="bg-yellow-200 -md shadow-lg mb-1 px-1"
                   ></input>
                   <input
                     defaultValue={item.Subject4}
-                    onChange={(e) => setSubject4(e.target.value)}
+                    onChange={(e) =>
+                      setData((prev) => {
+                        const idx = prev.findIndex((i) => i._id === item._id);
+                        const object = Object.assign({}, prev[idx], {
+                          Subject4: e.target.value,
+                        });
+                        return [
+                          ...prev.slice(0, idx), // keep items before
+                          object, // replace the
+                          ...prev.slice(idx + 1),
+                        ];
+                      })
+                    }
                     placeholder="Enter subject"
                     className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                   ></input>
                   <div
-                    onClick={() => handleSaveSubjects(item._id)}
+                    onClick={() =>
+                      handleSaveSubjects(
+                        item._id,
+                        item.Subject1,
+                        item.Subject2,
+                        item.Subject3,
+                        item.Subject4
+                      )
+                    }
                     className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                   >
                     {" "}

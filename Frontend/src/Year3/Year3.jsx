@@ -4,15 +4,13 @@ import axios from "axios";
 import { URL } from "../http/index";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { convertToPDF } from "../util/util";
+import { calc, convertToPDF } from "../util/util";
 
 export default function Year4() {
   let { year } = useParams();
 
   let i = 1;
   let j = 1;
-
-  const [subject, setSubject] = useState({ one: "", two: "" });
 
   const [data, setData] = useState([]);
 
@@ -24,18 +22,7 @@ export default function Year4() {
         response.data = response.data
           .map((item, index) => {
             // Calculate percentage
-            let percentage = 0;
-            if (item.Current_Semester === "5") {
-              percentage = (
-                ((item.SGPA_1 + item.SGPA_2 + item.SGPA_3) / 3) *
-                10
-              ).toFixed(2);
-            } else {
-              percentage = (
-                ((item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) / 4) *
-                10
-              ).toFixed(2);
-            }
+            let percentage = calc(item).percentage;
 
             return {
               ...item,
@@ -45,7 +32,6 @@ export default function Year4() {
           .sort((a, b) => b.percentage - a.percentage); // Sort in descending order by percentage
 
         setData(response.data); // Update the state with fetched data
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -60,17 +46,14 @@ export default function Year4() {
     };
   }, []); // Empty dependency array means this effect runs only once, on mount
 
-  const handleSaveSubjects = async (id) => {
+  const handleSaveSubjects = async (id, sub1, sub2) => {
     try {
       // Use state variables for subject1 and subject2
-      console.log("subjects");
-      console.log(subject.one);
-      console.log(subject.two);
+      console.log(sub1, sub2);
       await axios.put(`${URL}/api/students/updateSubjects/${id}`, {
-        Subject1: subject.one,
-        Subject2: subject.two,
+        Subject1: sub1,
+        Subject2: sub2,
       });
-      console.log("Subjects updated successfully");
       toast.success("Subjects updated successfully");
     } catch (error) {
       console.error("Error updating subjects:", error);
@@ -194,18 +177,27 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {((item.SGPA_1 + item.SGPA_2 + item.SGPA_3) / 3).toFixed(2)}
+                  {calc(item).average}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {console.log(item.Subject1 + " " + item.subject2)}
                   <div>
                     <input
                       defaultValue={item.Subject1}
                       onChange={(e) =>
-                        setSubject({ ...subject, one: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject1: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
@@ -213,13 +205,29 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject2}
                       onChange={(e) =>
-                        setSubject({ ...subject, two: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject2: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
                     <div
-                      onClick={() => handleSaveSubjects(item._id)}
+                      onClick={() =>
+                        handleSaveSubjects(
+                          item._id,
+                          item.Subject1,
+                          item.Subject2
+                        )
+                      }
                       className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                     >
                       {" "}
@@ -329,10 +337,7 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(
-                    (item.SGPA_1 + item.SGPA_2 + item.SGPA_3 + item.SGPA_4) /
-                    4
-                  ).toFixed(2)}
+                  {calc(item).average}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
@@ -342,7 +347,17 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject1}
                       onChange={(e) =>
-                        setSubject({ ...subject, one: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject1: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-1 px-1"
@@ -350,13 +365,29 @@ export default function Year4() {
                     <input
                       defaultValue={item.Subject2}
                       onChange={(e) =>
-                        setSubject({ ...subject, two: e.target.value })
+                        setData((prev) => {
+                          const idx = prev.findIndex((i) => i._id === item._id);
+                          const object = Object.assign({}, prev[idx], {
+                            Subject2: e.target.value,
+                          });
+                          return [
+                            ...prev.slice(0, idx), // keep items before
+                            object, // replace the
+                            ...prev.slice(idx + 1),
+                          ];
+                        })
                       }
                       placeholder="Enter subject"
                       className="bg-yellow-200 -md shadow-lg mb-2 px-1 "
                     ></input>
                     <div
-                      onClick={() => handleSaveSubjects(item._id)}
+                      onClick={() =>
+                        handleSaveSubjects(
+                          item._id,
+                          item.Subject1,
+                          item.Subject2
+                        )
+                      }
                       className="bg-green-500 w-20 text-white -lg cursor-pointer px-3"
                     >
                       {" "}
