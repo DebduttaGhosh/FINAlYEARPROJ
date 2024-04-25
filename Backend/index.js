@@ -4,8 +4,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
-//const FRONTEND = "https://final-year-project-ecru.vercel.app";
-const FRONTEND = "http://localhost:3000";
+const FRONTEND = "https://final-year-project-ecru.vercel.app";
+//const FRONTEND = "http://localhost:3000";
 const MONGO_URL =
   "mongodb+srv://debduttaghosh32:lrpVzyb36B1JJBdM@studentdata.dsafof2.mongodb.net/";
 

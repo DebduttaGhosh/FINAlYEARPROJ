@@ -160,10 +160,13 @@ export default function Search() {
                 {student.Active_Backlog}
               </td>
               <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                {calc(student).average.toFixed(2)}
+                {isNaN(calc(student).average) ? "NA" : calc(student).average}
               </td>
               <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                {calc(student).percentage.toFixed(2)} %
+                {isNaN(calc(student).percentage)
+                  ? "NA"
+                  : calc(student).percentage}{" "}
+                %
               </td>
               <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                 <div

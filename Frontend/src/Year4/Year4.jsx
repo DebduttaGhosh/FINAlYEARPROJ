@@ -19,6 +19,16 @@ export default function Year4() {
     const fetchData = async () => {
       try {
         const response = await axios.get(URL + "/api/students/");
+        response.data = response.data
+          .map((item, index) => {
+            // Calculate percentage
+            let percentage = calc(item).percentage;
+            return {
+              ...item,
+              percentage: percentage,
+            };
+          })
+          .sort((a, b) => b.percentage - a.percentage);
         setData(response.data); // Update the state with fetched data
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -154,23 +164,6 @@ export default function Year4() {
         <tbody>
           {data
             .filter((item) => item.Current_Semester === "7")
-            .map((item, index) => {
-              // Calculate percentage
-              const percentage =
-                ((item.SGPA_1 +
-                  item.SGPA_2 +
-                  item.SGPA_3 +
-                  item.SGPA_4 +
-                  item.SGPA_5) /
-                  5) *
-                10;
-
-              return {
-                ...item,
-                percentage: percentage,
-              };
-            })
-            .sort((a, b) => b.percentage - a.percentage) // Sort in descending order by percentage
             .map((item, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
@@ -204,12 +197,7 @@ export default function Year4() {
                   {item.Active_Backlog}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
-                  {(item.SGPA_1 +
-                    item.SGPA_2 +
-                    item.SGPA_3 +
-                    item.SGPA_4 +
-                    item.SGPA_5) /
-                    5}
+                  {calc(item).average}
                 </td>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
                   {item.percentage} %
@@ -276,7 +264,7 @@ export default function Year4() {
                         setData((prev) => {
                           const idx = prev.findIndex((i) => i._id === item._id);
                           const object = Object.assign({}, prev[idx], {
-                            Subject1: e.target.value,
+                            Subject4: e.target.value,
                           });
                           return [
                             ...prev.slice(0, idx), // keep items before
@@ -383,16 +371,6 @@ export default function Year4() {
         <tbody>
           {data
             .filter((item) => item.Current_Semester === "8")
-            .map((item, index) => {
-              // Calculate percentage
-              const percentage = calc(item).percentage;
-
-              return {
-                ...item,
-                percentage: percentage,
-              };
-            })
-            .sort((a, b) => b.percentage - a.percentage) // Sort in descending order by percentage
             .map((item, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-no-wrap border border-gray-300">
