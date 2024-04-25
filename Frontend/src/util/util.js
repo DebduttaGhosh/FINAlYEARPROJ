@@ -52,12 +52,13 @@ export const convertToPDF = (sem, data, year) => {
     })
   );
   console.log(removedNullValues);
-  removedNullValues = removedNullValues.map((i) => {
+  removedNullValues = removedNullValues.map((i, idx) => {
+    delete i.serial;
     delete i._id;
     delete i.Active_Backlog;
     delete i.Backlog_Subject;
     delete i.__v;
-    return i;
+    return { serial: idx, ...i };
   });
   const exportType = "xls";
   exportFromJSON({ data: removedNullValues, fileName, exportType });
